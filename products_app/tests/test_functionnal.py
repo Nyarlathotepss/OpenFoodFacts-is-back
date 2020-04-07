@@ -41,8 +41,8 @@ class PurBeurreTest(unittest.TestCase):
         driver = self.driver
         driver.get("http://127.0.0.1:8000/")
         self.assertIn("Pur Beurre", driver.title)
-        elem = driver.find_element_by_name(product_in_db)
-        elem.send_keys("eau")
+        elem = driver.find_element_by_name("query")
+        elem.send_keys(product_in_db)
         elem.send_keys(Keys.RETURN)
         assert "Votre produit n'existe pas dans notre base de données !" not in driver.page_source
 
@@ -73,16 +73,18 @@ class PurBeurreTest(unittest.TestCase):
     def test_change_password(self, username="leonardo37", password="davinci37"):
         driver = self.driver
         driver.get("http://127.0.0.1:8000/accounts/login/")
-        self.assertIn("Pur Beurre", driver.title)
         elem = driver.find_element_by_name("username")
         elem.send_keys(username)
         elem1 = driver.find_element_by_name("password")
         elem1.send_keys(password)
         elem.send_keys(Keys.RETURN)
         driver.implicitly_wait(1)  # seconds
-        driver.get("http://127.0.0.1:8000/accounts/user_account/")
-        elem2 = driver.find_element_by_id("link_change_password")
-        elem2.send_keys(Keys.RETURN)
+        to_user_account = driver.find_element_by_id("link_to_user_account")
+        to_user_account.send_keys(Keys.RETURN)
+        driver.implicitly_wait(1)  # seconds
+        to_change_password = driver.find_element_by_id("link_change_password")
+        to_change_password.send_keys(Keys.RETURN)
+        driver.implicitly_wait(1)
         elem_to_check = driver.find_element_by_id("change_password_title")
         message = elem_to_check.text
         assert "Change your password" in message
