@@ -1,0 +1,175 @@
+#link_off {
+    padding-top: 6%;
+    display:block;
+    width:400px;
+    margin:0 auto;
+}
+
+#no-account {
+     margin: auto;
+     width: 300px;
+     padding-top: 1%
+}
+
+#message_to_display{
+    padding-bottom: 12%;
+}
+
+#100g {
+    padding-right:1%
+}
+
+/* Nutriscore img *****************/
+
+#nutriscore {
+        max-width: 35%;
+	    height: auto;
+}
+
+/* Nutricode img *****************/
+
+#nutricode {
+    position: absolute;
+    bottom: 80%;
+}
+
+/* Masterhead block ******************/
+#masterhead {
+    padding-bottom: 3px;
+    background-color: #DE9440;
+}
+
+#login{
+    text-align:center
+}
+
+#button_login{
+    display: block;
+    margin: auto;
+}
+/* content block *********************/
+#content {
+    padding-top: 3%;
+}
+
+h2 {
+    padding-bottom: 4%;
+}
+
+[name^=button_id_] {
+   display: block;
+   margin : auto;
+}
+
+/* PRODUCT img,********************/
+
+#product_pick{
+	margin-left: auto;
+    margin-right: auto;
+}
+
+#product_show {
+    width: auto;
+	height: auto;
+	padding-bottom: 15%;
+}
+
+#product_show P {
+    text-align: center;
+}
+
+#login_form{
+    text-align: center;
+}
+
+#img_product {
+    max-width: 200px;
+	height: 300px;
+	display: block;
+	margin-left: auto;
+    margin-right: auto;
+}
+
+#product_to_show {
+    max-width: 200px;
+	height: 300px;
+	display: block;
+	margin-left: auto;
+    margin-right: auto;
+}
+
+/* MainNav ********************************/
+
+#mainNav {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  background-color: #fff;
+  transition: background-color 0.2s ease;
+}
+
+#mainNav .navbar-brand {
+  font-family: "Merriweather Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-weight: 700;
+  color: #212529;
+}
+
+#mainNav .navbar-nav .nav-item .nav-link {
+  color: #6c757d;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.75rem 0;
+}
+
+@media (min-width: 992px) {
+  #mainNav {
+    box-shadow: 10px;
+    background-color: grey;
+  }
+  #mainNav .navbar-brand {
+    color: rgba(255, 255, 255, 0.7);
+  }
+  #mainNav .navbar-brand:hover {
+    color: #fff;
+  }
+  #mainNav .navbar-nav .nav-item .nav-link {
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0 1rem;
+  }
+  #mainNav .navbar-nav .nav-item .nav-link:hover {
+    color: #fff;
+  }
+  #mainNav .navbar-nav .nav-item:last-child .nav-link {
+    padding-right: 0;
+  }
+  #mainNav.navbar-scrolled {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    background-color: #fff;
+  }
+  #mainNav.navbar-scrolled .navbar-brand {
+    color: #212529;
+  }
+  #mainNav.navbar-scrolled .navbar-brand:hover {
+    color: #f4623a;
+  }
+  #mainNav.navbar-scrolled .navbar-nav .nav-item .nav-link {
+    color: #212529;
+  }
+  #mainNav.navbar-scrolled .navbar-nav .nav-item .nav-link:hover {
+    color: #f4623a;
+  }
+}
+.fixed-top {
+  position: relative;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1030;
+}
+
+#signup {
+    padding-bottom: 8%;
+}
+
+#id_username {
+    text-align: left;
+}
