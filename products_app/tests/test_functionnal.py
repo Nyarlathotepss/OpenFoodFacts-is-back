@@ -70,6 +70,23 @@ class PurBeurreTest(unittest.TestCase):
         message = elem_to_check.text
         assert "Votre produit n'existe pas dans notre base de donnée !" in message
 
+    def test_change_password(self, username="leonardo37", password="davinci37"):
+        driver = self.driver
+        driver.get("http://127.0.0.1:8000/accounts/login/")
+        self.assertIn("Pur Beurre", driver.title)
+        elem = driver.find_element_by_name("username")
+        elem.send_keys(username)
+        elem1 = driver.find_element_by_name("password")
+        elem1.send_keys(password)
+        elem.send_keys(Keys.RETURN)
+        driver.implicitly_wait(1)  # seconds
+        driver.get("http://127.0.0.1:8000/accounts/user_account/")
+        elem2 = driver.find_element_by_id("link_change_password")
+        elem2.send_keys(Keys.RETURN)
+        elem_to_check = driver.find_element_by_id("change_password_title")
+        message = elem_to_check.text
+        assert "Change your password" in message
+
     def tearDown(self):
         self.driver.close()
 
