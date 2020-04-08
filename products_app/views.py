@@ -74,6 +74,19 @@ def favorites(request):
         return redirect('login')
 
 
+def favorite_deleted(request):
+    if request.user.is_authenticated:
+        product_id = request.POST.get('product_id')
+        product_query = Product.objects.get(id=product_id)
+        product_query.save()
+        current_user = request.user
+        user_id = current_user.id
+        user_query = User.objects.get(id=user_id)
+        user_query.save()
+        product_query.favorite_of.delete(user_query)
+        return render(request, 'products_app/favorites.html')
+
+
 def law_mention(request):
     return render(request, 'products_app/law_mention.html')
 
