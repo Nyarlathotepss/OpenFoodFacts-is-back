@@ -83,8 +83,8 @@ def favorite_deleted(request):
         user_id = current_user.id
         user_query = User.objects.get(id=user_id)
         user_query.save()
-        product_query.favorite_of.delete(user_query)
-        return render(request, 'products_app/favorites.html')
+        product_query.favorite_of.remove(user_query)
+        return render(request, 'products_app/home.html')
 
 
 def law_mention(request):
