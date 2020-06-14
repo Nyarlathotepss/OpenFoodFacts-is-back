@@ -7,5 +7,5 @@ urlpatterns = [
     url('product_save/', views.product_save, name="product_save"),
     url(r'favorites/', views.favorites, name="favorites"),
     url('law_mention/', views.law_mention, name="law_mention"),
-    url('favorite_deleted', views.favorite_deleted, name="favorite_deleted")
+    url('favorite_deleted/', views.favorite_deleted, name="favorite_deleted")
 ]

@@ -59,7 +59,24 @@ class Data:
                     sugars_100g=product[9]
                     )
                 data.save()
-                print("the informations product for " + str(product[0]) + " has been added ")
+                print("the informations product for " + product[0] + " has been added ")
             except Exception as error:
-                print("a problem has occurs with the product "+product[0])
-                print(error)
+                print("a problem has occurs with the product " + product[0] + ":", error)
+
+    def update_data_product_into_bdd(self):
+        for product in self.info_products:
+            product_name = str(product[0])
+            try:
+                p = Product.objects.get(name=product_name)
+                p.ingredient = product[1],
+                p.store = product[3],
+                p.url = product[4],
+                p.image_url = product[5],
+                p.fat_100g = product[6],
+                p.saturated_fat_100g = product[7],
+                p.salt_100g = product[8],
+                p.sugars_100g = product[9]
+                p.save()
+                print("Update of product"+p.name)
+            except Exception as error:
+                print("a problem has occurs with the product " + product[0] + ":", error)

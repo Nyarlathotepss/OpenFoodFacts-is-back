@@ -1,97 +1,117 @@
-import unittest
-from selenium import webdriver
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.common.keys import Keys
+from products_app.models import User, Product, Category
+from selenium.common.exceptions import NoSuchElementException
 
 
-class PurBeurreTest(unittest.TestCase):
+class MySeleniumTests(StaticLiveServerTestCase):
 
     def setUp(self):
-        self.driver = webdriver.Firefox()
+        super(MySeleniumTests, self).setUp()
+        self.selenium = WebDriver()
+        self.user = User.objects.create_user(username='test', password='Test1234', email='test@test.com',
+                                             is_active=True)
+        self.category = Category.objects.create(name='boissons')
+        self.category.save()
+        self.product = Product.objects.create(id=1, name='coca', nutriscore='c', url='www.coca.com',
+                                              image_url='www.linktojpg', category=self.category)
+        self.product_alt = Product.objects.create(id=2, name='eau', nutriscore='a', url='www.eau.com',
+                                                  image_url='www.linktojpg', category=self.category)
+        self.user.save(), self.product.save(), self.product_alt.save()
 
-    def test_login(self, username="leonardo37", password="davinci37"):
-        driver = self.driver
-        driver.get("http://127.0.0.1:8000/accounts/login/")
-        self.assertIn("Pur Beurre", driver.title)
-        elem = driver.find_element_by_name("username")
-        elem.send_keys(username)
-        elem1 = driver.find_element_by_name("password")
-        elem1.send_keys(password)
-        elem.send_keys(Keys.RETURN)
-        assert "Please enter a correct username and password." not in driver.page_source
-        driver.implicitly_wait(3)  # seconds
-        logout_img = driver.find_element_by_id("logout").is_displayed()  # check if logout img is displayed
-        if logout_img:
-            print("the logout image is correctly displayed")
+    def tearDown(self):
+        self.selenium.quit()
+        super(MySeleniumTests, self).tearDown()
+
+    def test_login(self, username="test", password="Test1234"):
+        self.selenium.get('%s%s' % (self.live_server_url, "/accounts/login/"))
+        self.selenium.implicitly_wait(1)
+        self.selenium.find_element_by_id('logo').is_displayed()
+        self.selenium.find_element_by_name("username").send_keys(username)
+        self.selenium.find_element_by_name("password").send_keys(password)
+        self.selenium.find_element_by_id("button_login").click()
+        self.selenium.implicitly_wait(1)
+        self.selenium.find_element_by_id("colette").is_displayed()
+        self.selenium.implicitly_wait(1)  # seconds
+        self.selenium.find_element_by_id("logout").is_displayed()  # check if logout img is displayed
+
+    def test_search(self):
+        self.selenium.get('%s%s' % (self.live_server_url, "/"))
+        self.selenium.implicitly_wait(1)
+        self.selenium.find_element_by_id('logo').is_displayed()
+        my_search = self.selenium.find_element_by_name("query")
+        my_search.send_keys("eau")
+        my_search.send_keys(Keys.RETURN)
+        self.selenium.implicitly_wait(1)  # seconds
+        self.selenium.find_element_by_id('product_pick').is_displayed()
 
     def test_redirection_login_to_saved_product(self):
-        driver = self.driver
-        driver.get("http://127.0.0.1:8000/")
-        self.assertIn("Pur Beurre", driver.title)
-        elem = driver.find_element_by_name("query")
-        elem.send_keys("eau")
-        elem.send_keys(Keys.RETURN)
-        driver.implicitly_wait(1)  # seconds
-        button = driver.find_element_by_name("button_id_3977")
-        button.send_keys(Keys.RETURN)
-        elem_to_check = driver.find_element_by_id("login")
-        message = elem_to_check.text
-        assert "Login" in message
-
-    def test_search(self, product_in_db="eau"):
-        driver = self.driver
-        driver.get("http://127.0.0.1:8000/")
-        self.assertIn("Pur Beurre", driver.title)
-        elem = driver.find_element_by_name("query")
-        elem.send_keys(product_in_db)
-        elem.send_keys(Keys.RETURN)
-        assert "Votre produit n'existe pas dans notre base de données !" not in driver.page_source
+        self.selenium.get('%s%s' % (self.live_server_url, "/"))
+        self.selenium.implicitly_wait(1)
+        self.selenium.find_element_by_id('logo').is_displayed()
+        my_search = self.selenium.find_element_by_name("query")
+        my_search.send_keys("coca")
+        my_search.send_keys(Keys.RETURN)
+        self.selenium.implicitly_wait(1)  # seconds
+        self.selenium.find_element_by_name("button_id_2").click()
+        self.selenium.find_element_by_id("login").is_displayed()
 
     def test_search_with_empty_query(self):
-        driver = self.driver
-        driver.get("http://127.0.0.1:8000/")
-        self.assertIn("Pur Beurre", driver.title)
-        elem = driver.find_element_by_name("query")
-        elem.send_keys("")
-        elem.send_keys(Keys.RETURN)
-        driver.implicitly_wait(2)  # seconds
-        elem_to_check = driver.find_element_by_id("message_to_display")
-        message = elem_to_check.text
+        self.selenium.get('%s%s' % (self.live_server_url, "/"))
+        self.selenium.implicitly_wait(1)
+        self.selenium.find_element_by_id('logo').is_displayed()
+        my_search = self.selenium.find_element_by_name("query")
+        my_search.send_keys("")
+        my_search.send_keys(Keys.RETURN)
+        self.selenium.implicitly_wait(1)  # seconds
+        element_to_check = self.selenium.find_element_by_id("message_to_display")
+        message = element_to_check.text
         assert "Votre saisie est vide !" in message
 
     def test_search_with_nonsense_query(self):
-        driver = self.driver
-        driver.get("http://127.0.0.1:8000/")
-        self.assertIn("Pur Beurre", driver.title)
-        elem = driver.find_element_by_name("query")
-        elem.send_keys("blabla")
-        elem.send_keys(Keys.RETURN)
-        driver.implicitly_wait(2)  # seconds
-        elem_to_check = driver.find_element_by_id("message_to_display")
-        message = elem_to_check.text
+        self.selenium.get('%s%s' % (self.live_server_url, "/"))
+        self.selenium.implicitly_wait(1)
+        self.selenium.find_element_by_id('logo').is_displayed()
+        my_search = self.selenium.find_element_by_name("query")
+        my_search.send_keys("blablabla")
+        my_search.send_keys(Keys.RETURN)
+        self.selenium.implicitly_wait(1)  # seconds
+        element_to_check = self.selenium.find_element_by_id("message_to_display")
+        message = element_to_check.text
         assert "Votre produit n'existe pas dans notre base de donnée !" in message
 
-    def test_change_password(self, username="leonardo37", password="davinci37"):
-        driver = self.driver
-        driver.get("http://127.0.0.1:8000/accounts/login/")
-        elem = driver.find_element_by_name("username")
-        elem.send_keys(username)
-        elem1 = driver.find_element_by_name("password")
-        elem1.send_keys(password)
-        elem.send_keys(Keys.RETURN)
-        driver.implicitly_wait(1)  # seconds
-        to_user_account = driver.find_element_by_id("link_to_user_account")
-        to_user_account.send_keys(Keys.RETURN)
-        driver.implicitly_wait(1)  # seconds
-        to_change_password = driver.find_element_by_id("link_change_password")
-        to_change_password.send_keys(Keys.RETURN)
-        driver.implicitly_wait(1)
-        elem_to_check = driver.find_element_by_id("change_password_title")
-        message = elem_to_check.text
-        assert "Change your password" in message
+    def test_change_password(self, username="test", password="Test1234"):
+        self.selenium.get('%s%s' % (self.live_server_url, "/accounts/login/"))
+        self.selenium.find_element_by_name("username").send_keys(username)
+        self.selenium.find_element_by_name("password").send_keys(password)
+        self.selenium.find_element_by_id("button_login").click()
+        self.selenium.implicitly_wait(1)  # seconds
+        self.selenium.find_element_by_id("link_to_user_account").click()
+        self.selenium.implicitly_wait(1)  # seconds
+        self.selenium.find_element_by_id("link_change_password").click()
+        self.selenium.implicitly_wait(1)
+        self.selenium.find_element_by_id("change_password_title").is_displayed()
 
-    def tearDown(self):
-        self.driver.close()
-
-
-if __name__ == '__main__':
-    unittest.main()
+    def test_add_then_delete_favorite(self, username="test", password="Test1234", product_in_db="coca"):
+        self.selenium.get('%s%s' % (self.live_server_url, "/accounts/login/"))
+        self.selenium.find_element_by_name("username").send_keys(username)
+        self.selenium.find_element_by_name("password").send_keys(password)
+        self.selenium.find_element_by_id("button_login").click()
+        self.selenium.implicitly_wait(1)  # seconds
+        self.selenium.find_element_by_name("query").send_keys(product_in_db)
+        self.selenium.find_element_by_name("query").send_keys(Keys.RETURN)
+        self.selenium.implicitly_wait(1)  # seconds
+        self.selenium.find_element_by_name("button_id_2").click()
+        self.selenium.implicitly_wait(1)  # seconds
+        self.selenium.find_element_by_id("go_to_home").click()
+        self.selenium.implicitly_wait(1)  # seconds
+        self.selenium.find_element_by_id("link_to_favorites").click()
+        self.selenium.implicitly_wait(1)  # seconds
+        self.selenium.find_element_by_name("button_id_2")
+        self.selenium.find_element_by_name("button_id_2").click()
+        self.selenium.implicitly_wait(1)  # seconds
+        self.selenium.find_element_by_id("link_to_favorites").click()
+        self.selenium.implicitly_wait(1)  # seconds
+        with self.assertRaises(NoSuchElementException):   # Test raise exception for find_element of button
+            self.selenium.find_element_by_name("button_id_2")
